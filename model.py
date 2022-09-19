@@ -2,7 +2,7 @@
 
 import tensorflow as tf
 from tensorflow import keras
-import matplotlib.pyplot as plt
+import performance
 import os
 import time
 
