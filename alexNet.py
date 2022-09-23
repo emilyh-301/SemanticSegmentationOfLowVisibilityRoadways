@@ -13,9 +13,9 @@ import time
 # train with good quality?
 
 # NEED TO UPDATE THESE WHEN WE FIGURE OUT THE DATASET STUFF
-train_ds = 0
-validation_ds = 0
-test_ds = 0
+x_train = 0
+y_train = 0
+x_test = 0
 num_classes = 0
 
 model = keras.models.Sequential([
@@ -43,15 +43,12 @@ model = keras.models.Sequential([
 model.compile(loss='sparse_categorical_crossentropy', optimizer=tf.optimizers.SGD(lr=0.01), metrics=['accuracy'])
 model.summary()
 
-history = model.fit(train_ds,
+history = model.fit(x_train, y_train,
           epochs=50,
-          validation_data=validation_ds,
-          validation_freq=1,
-          #callbacks=[tensorboard_cb]  do we want any call backs
+          #callbacks=callback  TODO: do we want any call backs?
           )
 
-# Open up a terminal at the directory level where the TensorBoard log folder exists and run the following command:
-# tensorboard --logdir logs
-# this shows loss and val loss graph, also accuracy graph
+# To print the loss and accuracy graphs
+performance.plot_performance(history)
 
-model.evaluate(test_ds)
+model.evaluate(x_test)
