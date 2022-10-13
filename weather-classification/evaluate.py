@@ -4,6 +4,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import sys
 import numpy as np
 from tensorflow.keras.models import load_model
+from sklearn.utils import shuffle
 from PIL import Image
 
 
@@ -26,9 +27,12 @@ def load_dataset() -> tuple:
                 x.append(np.array(image) / 255)
                 y.append(count)
         count += 1
-    return np.array(x), np.array(y)
+    x, y = np.array(x), np.array(y)
+    x, y = shuffle(x, y, random_state=42)
+    return x, y
 
 x, y = load_dataset()
 model = load_model(MODEL_DIR)
+model.summary()
 evaluation = model.evaluate(x, y, verbose=0, batch_size=BATCH_SIZE)
 print(evaluation)
