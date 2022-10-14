@@ -37,7 +37,7 @@ threading.Thread(target=trace, daemon=True).start()
 
 
 from vgg import VGG
-for unit_count in [50, 100, 200, 500, 1000, 2000, 4096]:
+for unit_count in [25, 50, 100, 200, 500, 1000, 2000, 4096]:
     for lr in [i/1000 for i in range(1, 11)]:
         for batch_size in [8, 16, 32, 64, 128]:
             model_name = str(unit_count) + '_' + str(lr) + '_' + str(batch_size)
