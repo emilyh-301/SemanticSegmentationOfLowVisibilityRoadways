@@ -12,12 +12,12 @@ DATASET_DIR = sys.argv[1]
 MODEL_DIR = sys.argv[2]
 WEATHERS = ['Fog', 'Night', 'Rain', 'Snow']
 TASKS = ['Test', 'Train', 'Validation']
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 
 
 def load_dataset() -> tuple:
     count = 0
-    x, y = list(), list()
+    x, y, filenames = list(), list(), list()
 
     for weather in WEATHERS:
         for task in TASKS:
@@ -26,13 +26,18 @@ def load_dataset() -> tuple:
                 image = Image.open(os.path.join(directory, filename))
                 x.append(np.array(image) / 255)
                 y.append(count)
+                filenames.append(filename)
         count += 1
-    x, y = np.array(x), np.array(y)
-    x, y = shuffle(x, y, random_state=42)
-    return x, y
+    x, y, filenames = np.array(x), np.array(y), np.array(filenames)
+    x, y, filenames = shuffle(x, y, filenames, random_state=42)
+    return x, y, filenames
 
-x, y = load_dataset()
+x, y, filenames = load_dataset()
 model = load_model(MODEL_DIR)
 model.summary()
-evaluation = model.evaluate(x, y, verbose=0, batch_size=BATCH_SIZE)
-print(evaluation)
+
+predictions = model.predict(x, verbose=0, batch_size=BATCH_SIZE)
+predictions = np.argmax(predictions, axis=1)
+for i, pred in enumerate(predictions):
+    if pred != y[i]:
+        print(pred, y[i], filenames[i])
