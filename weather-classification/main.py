@@ -29,17 +29,20 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 DATASET_DIR = sys.argv[1]
 SAVE_DIR = sys.argv[2] if len(sys.argv) > 2 else mkdir(directory='.', name='save')
 
-# Create a lock file for multiprocessing
-open(os.path.join(SAVE_DIR, 'lock'), 'w')
-
 # Start tracing process ids
 threading.Thread(target=trace, daemon=True).start()
 
+# unit_counts = [50, 100, 200, 500, 1000, 2000, 4096]
+# lrs = [i/1000 for i in range(1, 11)]
+# batch_sizes = [16, 32, 64, 128]
+unit_counts = [25, 50, 100, 200, 500, 1000, 2000, 4096]
+lrs = [i/10000 for i in range(5, 11)]
+batch_sizes = [4, 8]
 
 from vgg import VGG
-for unit_count in [25, 50, 100, 200, 500, 1000, 2000, 4096]:
-    for lr in [i/1000 for i in range(1, 11)]:
-        for batch_size in [8, 16, 32, 64, 128]:
+for unit_count in unit_counts:
+    for lr in lrs:
+        for batch_size in batch_sizes:
             model_name = str(unit_count) + '_' + str(lr) + '_' + str(batch_size)
             try:
                 with FileLock(os.path.join(SAVE_DIR, 'lock')):
