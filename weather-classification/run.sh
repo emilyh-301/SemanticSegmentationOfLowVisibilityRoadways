@@ -1,5 +1,6 @@
 #!/usr/bin/expect -f
 
+cp main.py research.py
 
 count=1
 while [ -d "save${count}" ]
