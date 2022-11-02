@@ -29,4 +29,3 @@ for i, label in enumerate(ax2.xaxis.get_ticklabels()):
 
 # fig.tight_layout()
 plt.show()
-plt.savefig('myPlot')

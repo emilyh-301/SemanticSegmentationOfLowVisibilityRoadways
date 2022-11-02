@@ -8,11 +8,9 @@ def mkdir(directory: str, name: str) -> str:
     return save_dir
 
 def trace():
-    pid = os.getpid()
-
     while True:
         if os.path.exists(os.path.join(SAVE_DIR, 'kill')):
-            os.kill(pid, signal.SIGTERM)
+            os.kill(os.getpid(), signal.SIGTERM)
             break
         time.sleep(0.2)
 
@@ -35,9 +33,9 @@ threading.Thread(target=trace, daemon=True).start()
 # unit_counts = [50, 100, 200, 500, 1000, 2000, 4096]
 # lrs = [i/1000 for i in range(1, 11)]
 # batch_sizes = [16, 32, 64, 128]
-unit_counts = [25, 50, 100, 200, 500, 1000, 2000, 4096]
-lrs = [i/10000 for i in range(5, 11)]
-batch_sizes = [4, 8]
+unit_counts = [10, 25, 50, 100, 200, 500, 1000, 2000, 4096]
+lrs = [i/10000 for i in range(1, 11)]
+batch_sizes = [2, 4, 8, 16]
 
 from vgg import VGG
 for unit_count in unit_counts:

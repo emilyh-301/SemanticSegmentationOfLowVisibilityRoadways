@@ -9,7 +9,7 @@ from PIL import Image
 
 
 DATASET_DIR = sys.argv[1]
-MODEL_DIR = sys.argv[2]
+MODEL_PATH = sys.argv[2]
 WEATHERS = ['Fog', 'Night', 'Rain', 'Snow']
 TASKS = ['Test', 'Train', 'Validation']
 BATCH_SIZE = 16
@@ -33,7 +33,7 @@ def load_dataset() -> tuple:
     return x, y, filenames
 
 x, y, filenames = load_dataset()
-model = load_model(MODEL_DIR)
+model = load_model(MODEL_PATH)
 model.summary()
 
 predictions = model.predict(x, verbose=0, batch_size=BATCH_SIZE)
