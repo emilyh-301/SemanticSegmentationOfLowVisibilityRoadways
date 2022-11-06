@@ -38,27 +38,36 @@ for index, item in classes_df.iterrows():
 num_classes = len(classes)
 
 model = UNet(image_size, 3, 64, num_classes).model
-model.compile(optimizer='adam', loss='categorical_crossentropy' ,metrics=['accuracy'])
+
+loss_functions = ['categorical_crossentropy', 'kl_divergence', 'poisson']
+opt_functions = ['adam', 'sgd', 'adadelta', 'adagrad', 'adamax']
+count = 0
+for loss in loss_functions:
+    for opt in opt_functions:
+        count += 1
+        print('\n**********' + str(count) + ' Loss: ' + loss + ' Opt: ' + opt + '***********\n')
+        model.compile(optimizer=opt, loss=loss ,metrics=['accuracy'])
 
 # To load previously trained model
 # model.load_weights('./fog-weights.h5')
 
-my_callbacks = [
-    CSVLogger("./models/UNet/logs/log.csv", separator=",", append=False),
-    ModelCheckpoint(filepath='./models/UNet/fog-weights.h5', save_weights_only=True, monitor='val_accuracy', mode='max', save_best_only=True),
-    TensorBoard(log_dir='./models/UNet/logs')
-]
+        my_callbacks = [
+            CSVLogger("./models/UNet/logs/log-" + loss + "-" + opt + ".csv", separator=",", append=False),
+            ModelCheckpoint(filepath='./models/UNet/fog-weights.h5', save_weights_only=True, monitor='val_accuracy', mode='max', save_best_only=True),
+            TensorBoard(log_dir='./models/UNet/logs')
+        ]
 
-training_data = DataGenerator(training_duo+testing_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
-training_steps = training_data.__len__()
-validation_data = DataGenerator(validation_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
-validation_steps = validation_data.__len__()
+        training_data = DataGenerator(training_duo+testing_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
+        training_steps = training_data.__len__()
+        validation_data = DataGenerator(validation_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
+        validation_steps = validation_data.__len__()
 
-model_train = model.fit(training_data, epochs=1, callbacks=my_callbacks, validation_data=validation_data, steps_per_epoch=training_steps, validation_steps=validation_steps)
-prediction = Predict(image_size, model, classes)
+        model_train = model.fit(training_data, epochs=50, callbacks=my_callbacks, validation_data=validation_data, steps_per_epoch=training_steps, validation_steps=validation_steps)
 
-for x in range(0, 10):
-    prediction.predict(validation_duo[x])
+# prediction = Predict(image_size, model, classes)
+#
+# for x in range(0, 10):
+#     prediction.predict(validation_duo[x])
 
 
 

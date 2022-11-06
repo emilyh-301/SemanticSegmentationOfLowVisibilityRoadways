@@ -38,10 +38,13 @@ for index, item in classes_df.iterrows():
 num_classes = len(classes)
 
 model = UNet(image_size, 3, 64, num_classes).model
-loss_functions = ['categorical_crossentropy', 'kl_divergence', 'poisson']
+loss_functions = ['kl_divergence', 'poisson']
 opt_functions = ['adam', 'sgd', 'adadelta', 'adagrad', 'adamax']
+count = 0
 for loss in loss_functions:
     for opt in opt_functions:
+        count += 1
+        print('\n**********' + str(count) + ' Loss: ' + loss + ' Opt: ' + opt + '***********\n')
         model.compile(optimizer=opt, loss=loss ,metrics=['accuracy'])
         # To load previously trained model
         # model.load_weights('./night-weights.h5')
