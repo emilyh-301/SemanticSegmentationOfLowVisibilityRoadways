@@ -57,7 +57,7 @@ for loss in loss_functions:
         validation_data = DataGenerator(validation_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
         validation_steps = validation_data.__len__()
 
-        model_train = model.fit(training_data, epochs=50, validation_data=validation_data, callback=my_callbacks, steps_per_epoch=training_steps, validation_steps=validation_steps)
+        model_train = model.fit(training_data, epochs=50, validation_data=validation_data, callbacks=my_callbacks, steps_per_epoch=training_steps, validation_steps=validation_steps)
 
         #prediction = Predict(image_size, model, classes)
 
