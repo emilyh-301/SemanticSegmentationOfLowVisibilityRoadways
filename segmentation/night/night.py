@@ -38,7 +38,7 @@ for index, item in classes_df.iterrows():
 num_classes = len(classes)
 
 model = UNet(image_size, 3, 64, num_classes).model
-loss_functions = ['categorical_crossentropy', 'sparse_categorical_crossentropy', 'kl_divergence', 'poisson']
+loss_functions = ['categorical_crossentropy', 'kl_divergence', 'poisson']
 opt_functions = ['adam', 'sgd', 'adadelta', 'adagrad', 'adamax']
 for loss in loss_functions:
     for opt in opt_functions:
