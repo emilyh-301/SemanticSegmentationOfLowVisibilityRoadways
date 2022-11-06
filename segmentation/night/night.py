@@ -13,6 +13,8 @@ from predict import Predict
 json_file = open('../config/config.json')
 data = json.load(json_file)
 dataset_path = data['DATASET_PATH'] + 'Night/'
+EPOCHS = 50
+BATCH_SIZE = 2
 
 validation_rgb = list(Path(dataset_path + 'RGB/Night_Validation').glob('*.png'))
 validation_annotated = list(Path(dataset_path + 'Annotated/Validation').glob('*_gt_labelColor.png'))
@@ -55,12 +57,12 @@ for loss in loss_functions:
             TensorBoard(log_dir='./models/UNet/logs')
         ]
 
-        training_data = DataGenerator(training_duo+testing_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
+        training_data = DataGenerator(training_duo+testing_duo,classes,num_classes,batch_size=BATCH_SIZE, dim=image_size ,shuffle=True)
         training_steps = training_data.__len__()
-        validation_data = DataGenerator(validation_duo,classes,num_classes,batch_size=3, dim=image_size ,shuffle=True)
+        validation_data = DataGenerator(validation_duo,classes,num_classes,batch_size=BATCH_SIZE, dim=image_size ,shuffle=True)
         validation_steps = validation_data.__len__()
 
-        model_train = model.fit(training_data, epochs=50, validation_data=validation_data, callbacks=my_callbacks, steps_per_epoch=training_steps, validation_steps=validation_steps)
+        model_train = model.fit(training_data, epochs=EPOCHS, validation_data=validation_data, callbacks=my_callbacks, steps_per_epoch=training_steps, validation_steps=validation_steps)
 
         #prediction = Predict(image_size, model, classes)
 
