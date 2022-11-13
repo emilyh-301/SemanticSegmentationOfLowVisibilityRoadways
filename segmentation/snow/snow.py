@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from tensorflow import keras
 from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, TensorBoard
 from models.UNet.UNet import UNet
 import json
@@ -13,7 +14,7 @@ from predict import Predict
 json_file = open('../config/config.json')
 data = json.load(json_file)
 dataset_path = data['DATASET_PATH'] + 'Snow/'
-EPOCHS = 100
+EPOCHS = 30
 BATCH_SIZE = 4
 
 validation_rgb = list(Path(dataset_path + 'RGB/Snow_Validation').glob('*.png'))
@@ -41,20 +42,20 @@ num_classes = len(classes)
 
 model = UNet(image_size, 3, 64, num_classes).model
 
-loss_functions = ['kl_divergence', 'poisson']
+loss_functions = ['kl_divergence', 'poisson', 'categorical_crossentropy']
 opt_functions = ['adam', 'sgd', 'adadelta', 'adagrad', 'adamax']
 count = 0
 for loss in loss_functions:
     for opt in opt_functions:
         count += 1
         print('\n**********' + str(count) + ' Loss: ' + loss + ' Opt: ' + opt + '***********\n')
-        model.compile(optimizer=opt, loss=loss ,metrics=['accuracy'])
+        model.compile(optimizer=opt, loss=loss ,metrics=[keras.metrics.OneHotIoU(num_classes=num_classes, target_class_id=classes)])
 
 # To load previously trained model
 # model.load_weights('./snow-weights.h5')
 
         my_callbacks = [
-            CSVLogger("./models/UNet/logs/log-" + loss + "-" + opt + ".csv", separator=",", append=False),
+            CSVLogger("./models/UNet/logs/log-IoU-" + loss + "-" + opt + ".csv", separator=",", append=False),
             ModelCheckpoint(filepath='./models/UNet/snow-weights.h5', save_weights_only=True, monitor='val_accuracy', mode='max', save_best_only=True),
             TensorBoard(log_dir='./models/UNet/logs')
         ]
