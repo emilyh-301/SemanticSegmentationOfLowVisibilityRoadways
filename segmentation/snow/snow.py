@@ -7,6 +7,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, TensorBoard
 from models.UNet.UNet import UNet
 import json
 import sys
+import performance
 sys.path.insert(0, '../shared/')
 from data_generator import DataGenerator
 from predict import Predict
@@ -49,7 +50,7 @@ for loss in loss_functions:
     for opt in opt_functions:
         count += 1
         print('\n**********' + str(count) + ' Loss: ' + loss + ' Opt: ' + opt + '***********\n')
-        model.compile(optimizer=opt, loss=loss ,metrics=[keras.metrics.OneHotIoU(num_classes=num_classes, target_class_id=classes)])
+        model.compile(optimizer=opt, loss=loss ,metrics=[keras.metrics.OneHotIoU(num_classes=num_classes, target_class_ids=classes)])
 
 # To load previously trained model
 # model.load_weights('./snow-weights.h5')
@@ -66,6 +67,7 @@ for loss in loss_functions:
         validation_steps = validation_data.__len__()
 
         model_train = model.fit(training_data, epochs=EPOCHS, callbacks=my_callbacks, validation_data=validation_data, steps_per_epoch=training_steps, validation_steps=validation_steps)
+        performance.plot_performance(model_train, loss + '-' + opt + '-plot')
 
 # prediction = Predict(image_size, model, classes)
 #
