@@ -7,7 +7,6 @@ from tensorflow.keras.callbacks import ModelCheckpoint, CSVLogger, TensorBoard
 from models.UNet.UNet import UNet
 import json
 import sys
-import performance
 sys.path.insert(0, '../shared/')
 from data_generator import DataGenerator
 from predict import Predict
@@ -67,7 +66,7 @@ for loss in loss_functions:
         validation_steps = validation_data.__len__()
 
         model_train = model.fit(training_data, epochs=EPOCHS, callbacks=my_callbacks, validation_data=validation_data, steps_per_epoch=training_steps, validation_steps=validation_steps)
-        performance.plot_performance(model_train, loss + '-' + opt + '-plot')
+        #performance.plot_performance(model_train, loss + '-' + opt + '-plot')
 
 # prediction = Predict(image_size, model, classes)
 #
