@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def plot_performance(model_history):
+def plot_performance(model_history, title):
     '''
     Outputs the accuracy and loss graphs for the training history
     :param model_history: the history of the model
@@ -24,5 +24,5 @@ def plot_performance(model_history):
     ax2.set_ylabel('Loss')
     ax2.set_xlabel('Epoch')
     ax2.legend(['train', 'validation'], loc='upper right')
-    plt.show()
-    plt.savefig('myPlot')
+    # plt.show()
+    plt.savefig(title)
