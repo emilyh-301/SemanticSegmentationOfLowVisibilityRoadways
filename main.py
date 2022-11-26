@@ -1,33 +1,61 @@
-# Emily Haigh, Anthony An, Josh Leppo & Manoah Mohan
+import os
+import sys
+import numpy as np
+from PIL import Image
+from tensorflow.keras.models import load_model
 
-import performance
-import alexNet
-import tensorflow as tf
-from tensorflow import keras
 
-# dataset processing questions:
-# rgb
-# image dimension? input_shape = (x, y, 3)
-# train with good quality?
-# TODO: NEED TO UPDATE THESE WHEN WE FIGURE OUT THE DATASET STUFF
-x_train = 0
-y_train = 0
-x_test = 0
-num_classes = 4
-classes = ['dark', 'rain', 'snow', 'fog']
+if len(sys.argv) < 3:
+    print('You should set a dataset path and model path.')
+    sys.exit(1)
 
-alexNet_model = alexNet.alexNet(num_classes=4).model
+DATASET_PATH = sys.argv[1]
+MODEL_PATH = sys.argv[2]
 
-alexNet_model.compile(loss='sparse_categorical_crossentropy', optimizer=tf.optimizers.SGD(lr=0.01), metrics=['accuracy'])
-alexNet_model.summary()
 
-history = alexNet_model.fit(x_train, y_train,
-          epochs=50,
-          #callbacks=callback  TODO: do we want any call backs?
-          )
+def load_dataset(path: str) -> list:
+    # Load an image
+    if os.path.isfile(path=path):
+        image = Image.open(fp=path)
+        image = np.asarray(image) / 255.0
+        image = np.reshape(image, (1, *image.shape))
+        return [image]
 
-# To print the loss and accuracy graphs
-performance.plot_performance(history)
+    # Load multiple images in a directory
+    else:
+        image_arr = list()
+        filenames = os.listdir(path)
+        for filename in filenames:
+            image = Image.open(fp=os.path.join(path, filename))
+            image = np.asarray(image) / 255.0
+            image = np.reshape(image, (1, *image.shape))
+            image_arr.append(image)
+        return image_arr
 
-alexNet_model.evaluate(x_test)
 
+dataset = load_dataset(path=DATASET_PATH)
+cls_model = load_model(filepath=os.path.join(MODEL_PATH, 'Classification'))
+fog_model = load_model(filepath=os.path.join(MODEL_PATH, 'Fog'))
+Night_model = load_model(filepath=os.path.join(MODEL_PATH, 'Night'))
+Rain_model = load_model(filepath=os.path.join(MODEL_PATH, 'Rain'))
+Snow_model = load_model(filepath=os.path.join(MODEL_PATH, 'Snow'))
+
+for data in dataset:
+    predictions = cls_model.predict(x=data)
+    pred_cls = np.argmax(predictions, axis=1)[0]
+
+    # Fog
+    if pred_cls == 0:
+        pass
+
+    # Night
+    elif pred_cls == 1:
+        pass
+
+    # Rain
+    elif pred_cls == 2:
+        pass
+
+    # Snow
+    elif pred_cls == 3:
+        pass
