@@ -40,7 +40,7 @@ class VGG:
         history = model.fit(x_train, y_train, epochs=EPOCH, batch_size=self.batch_size, validation_split=VAL_SPLIT, callbacks=[stop_callback])
         evaluation = model.evaluate(x_test, y_test, verbose=0, batch_size=self.batch_size)
         self.__save_history(filepath=os.path.join(self.save_dir, 'history.txt'), history=history)
-        self.__save_model(directory=os.path.join(self.save_dir), model=model)
+        self.__save_model(filepath=os.path.join(self.save_dir, 'model.h5'), model=model)
         self.__save_evaluation(filepath=os.path.join(self.save_dir, 'evaluation.txt'), evaluation=evaluation)
 
     def __create_model(self, shape: tuple) -> Model:
@@ -48,7 +48,6 @@ class VGG:
             [
                 VGG19(input_shape=shape, include_top=False, weights='imagenet'),
                 GlobalAveragePooling2D(),
-                # GlobalMaxPooling2D(),
                 Dense(self.fc_unit_count, activation=relu),
                 Dense(self.fc_unit_count, activation=relu),
                 Dense(4, activation=softmax)
@@ -89,8 +88,8 @@ class VGG:
         with open(filepath, mode='w') as f:
             pd.DataFrame(history.history).to_json(f)
 
-    def __save_model(self, directory: str, model: Model) -> None:
-        model.save(directory)
+    def __save_model(self, filepath: str, model: Model) -> None:
+        model.save(filepath)
 
     def __save_evaluation(self, filepath: str, evaluation: tuple) -> None:
         content = 'Test loss: ' + str(evaluation[0]) + '\n' + 'Test accuracy: ' + str(evaluation[1])
